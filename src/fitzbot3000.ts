@@ -17,7 +17,7 @@ import { aoeScraper } from './webScraper';
 import { AoeStats } from './aoeStats';
 import { VariableTable } from './variables';
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
-
+import { filterMessage } from "./profanity";
 // Load in JSON files
 const settings = JSON.parse(fs.readFileSync('./settings.json', 'utf-8'));
 const web = JSON.parse(fs.readFileSync('./web.json', 'utf-8'));
@@ -324,7 +324,8 @@ async function main()
 	await pubSubClient.onRedemption(channelId, (message: PubSubRedemptionMessage) =>
 	{
 		logger.info(`Redemption: ${message.rewardId} ${message.rewardName}`);
-		actions.fireEvent("redemption", { name: message.rewardName, msg: message.message, user: message.userName });
+
+		actions.fireEvent("redemption", { name: message.rewardName, msg: filterMessage(message.message), user: message.userName });
 	});
 
 	await pubSubClient.onSubscription(channelId, async (message: PubSubSubscriptionMessage) =>
